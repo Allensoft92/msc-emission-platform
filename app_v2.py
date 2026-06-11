@@ -113,3 +113,61 @@ if input_source == "Upload CSV/Excel":
         "Upload CSV or Excel File",
         type=["csv", "xlsx"]
     )
+# ==================================
+# FILE PROCESSING
+# ==================================
+
+if uploaded_file is not None:
+
+    try:
+
+        if uploaded_file.name.endswith(".csv"):
+            raw_df = pd.read_csv(uploaded_file)
+
+        else:
+            raw_df = pd.read_excel(uploaded_file)
+
+        st.success(
+            f"Data loaded and preprocessed: {len(raw_df)} rows"
+        )
+
+        st.subheader("Raw Data Preview")
+
+        st.dataframe(raw_df.head())
+
+        processed_df = preprocess_data(raw_df)
+
+        st.subheader("Processed Data")
+
+        st.dataframe(processed_df.head())
+
+        if st.button("🚀 Predict, Classify and Forecast"):
+
+            X = processed_df[feature_cols]
+
+            predictions = regressor.predict(X)
+
+            pred_df = pd.DataFrame(
+                predictions,
+                columns=target_cols
+            )
+
+            source_pred = classifier.predict(X)
+
+            pred_df["Predicted_Source"] = (
+                label_encoder.inverse_transform(
+                    source_pred
+                )
+            )
+
+            st.success(
+                "Prediction completed successfully."
+            )
+
+            st.subheader("Prediction Results")
+
+            st.dataframe(pred_df)
+
+    except Exception as e:
+
+        st.error(str(e))
