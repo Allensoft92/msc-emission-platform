@@ -86,20 +86,10 @@ def preprocess_data(df):
         pivot_df[f"{col}_lag2"] = pivot_df[col].shift(2)
         pivot_df[f"{col}_lag3"] = pivot_df[col].shift(3)
 
-    # Convert model features to numeric
+    pivot_df = pivot_df.dropna()
 
-for col in feature_cols:
+    return pivot_df
 
-    if col in pivot_df.columns:
-
-        pivot_df[col] = pd.to_numeric(
-            pivot_df[col],
-            errors="coerce"
-        )
-
-pivot_df = pivot_df.dropna()
-
-return pivot_df
 # ==================================
 # TITLE
 # ==================================
