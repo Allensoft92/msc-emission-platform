@@ -69,40 +69,27 @@ def preprocess_data(df):
     )
 
     pivot_df = pivot_df.sort_values("Date")
-pivot_df["Month_Num"] = pivot_df["Date"].dt.month
-pivot_df["Year_Num"] = pivot_df["Date"].dt.year
 
-targets = [
-    "CO2 (ppm)",
-    "CH4 (ppm)",
-    "VOC (ppm)",
-    "SPM (ug/m3)"
-]
+    pivot_df["Month_Num"] = pivot_df["Date"].dt.month
+    pivot_df["Year_Num"] = pivot_df["Date"].dt.year
 
-for col in targets:
+    targets = [
+        "CO2 (ppm)",
+        "CH4 (ppm)",
+        "VOC (ppm)",
+        "SPM (ug/m3)"
+    ]
 
-    pivot_df[f"{col}_lag1"] = pivot_df[col].shift(1)
-    pivot_df[f"{col}_lag2"] = pivot_df[col].shift(2)
-    pivot_df[f"{col}_lag3"] = pivot_df[col].shift(3)
+    for col in targets:
 
         pivot_df[f"{col}_lag1"] = pivot_df[col].shift(1)
         pivot_df[f"{col}_lag2"] = pivot_df[col].shift(2)
         pivot_df[f"{col}_lag3"] = pivot_df[col].shift(3)
 
-        # Convert model features to numeric
-
-    for col in feature_cols:
-
-        if col in pivot_df.columns:
-
-            pivot_df[col] = pd.to_numeric(
-                pivot_df[col],
-                errors="coerce"
-            )
-
     pivot_df = pivot_df.dropna()
 
     return pivot_df
+
 # ==================================
 # TITLE
 # ==================================
@@ -126,61 +113,3 @@ if input_source == "Upload CSV/Excel":
         "Upload CSV or Excel File",
         type=["csv", "xlsx"]
     )
-# ==================================
-# FILE PROCESSING
-# ==================================
-
-if uploaded_file is not None:
-
-    try:
-
-        if uploaded_file.name.endswith(".csv"):
-            raw_df = pd.read_csv(uploaded_file)
-
-        else:
-            raw_df = pd.read_excel(uploaded_file)
-
-        st.success(
-            f"Data loaded and preprocessed: {len(raw_df)} rows"
-        )
-
-        st.subheader("Raw Data Preview")
-
-        st.dataframe(raw_df.head())
-
-        processed_df = preprocess_data(raw_df)
-
-        st.subheader("Processed Data")
-
-        st.dataframe(processed_df.head())
-
-        if st.button("🚀 Predict, Classify and Forecast"):
-
-            X = processed_df[feature_cols]
-
-            predictions = regressor.predict(X)
-
-            pred_df = pd.DataFrame(
-                predictions,
-                columns=target_cols
-            )
-
-            source_pred = classifier.predict(X)
-
-            pred_df["Predicted_Source"] = (
-                label_encoder.inverse_transform(
-                    source_pred
-                )
-            )
-
-            st.success(
-                "Prediction completed successfully."
-            )
-
-            st.subheader("Prediction Results")
-
-            st.dataframe(pred_df)
-
-    except Exception as e:
-
-        st.error(str(e))
