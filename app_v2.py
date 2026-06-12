@@ -141,7 +141,7 @@ if uploaded_file is not None:
 
         st.dataframe(processed_df.head())
 
-       if st.button("🚀 Predict, Classify and Forecast"):
+     if st.button("🚀 Predict, Classify and Forecast"):
 
     X = processed_df[feature_cols].copy()
 
@@ -172,7 +172,6 @@ if uploaded_file is not None:
     st.subheader("Prediction Results")
 
     st.dataframe(pred_df)
-
     except Exception as e:
 
         st.error(str(e))
