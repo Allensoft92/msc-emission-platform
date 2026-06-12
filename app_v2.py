@@ -141,32 +141,37 @@ if uploaded_file is not None:
 
         st.dataframe(processed_df.head())
 
-        if st.button("🚀 Predict, Classify and Forecast"):
+       if st.button("🚀 Predict, Classify and Forecast"):
 
-            X = processed_df[feature_cols]
+    X = processed_df[feature_cols].copy()
 
-            predictions = regressor.predict(X)
+    for col in X.columns:
+        X[col] = pd.to_numeric(X[col], errors="coerce")
 
-            pred_df = pd.DataFrame(
-                predictions,
-                columns=target_cols
-            )
+    X = X.fillna(0)
 
-            source_pred = classifier.predict(X)
+    predictions = regressor.predict(X)
 
-            pred_df["Predicted_Source"] = (
-                label_encoder.inverse_transform(
-                    source_pred
-                )
-            )
+    pred_df = pd.DataFrame(
+        predictions,
+        columns=target_cols
+    )
 
-            st.success(
-                "Prediction completed successfully."
-            )
+    source_pred = classifier.predict(X)
 
-            st.subheader("Prediction Results")
+    pred_df["Predicted_Source"] = (
+        label_encoder.inverse_transform(
+            source_pred
+        )
+    )
 
-            st.dataframe(pred_df)
+    st.success(
+        "Prediction completed successfully."
+    )
+
+    st.subheader("Prediction Results")
+
+    st.dataframe(pred_df)
 
     except Exception as e:
 
