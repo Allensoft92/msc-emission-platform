@@ -88,7 +88,12 @@ targets = [
     "VOC (ppm)",
     "SPM (ug/m3)"
 ]
-    for col in targets:
+
+for col in targets:
+
+    pivot_df[f"{col}_lag1"] = pivot_df[col].shift(1)
+    pivot_df[f"{col}_lag2"] = pivot_df[col].shift(2)
+    pivot_df[f"{col}_lag3"] = pivot_df[col].shift(3)
 
         pivot_df[f"{col}_lag1"] = pivot_df[col].shift(1)
         pivot_df[f"{col}_lag2"] = pivot_df[col].shift(2)
