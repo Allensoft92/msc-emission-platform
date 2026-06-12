@@ -69,18 +69,8 @@ def preprocess_data(df):
     )
 
     pivot_df = pivot_df.sort_values("Date")
-
 pivot_df["Month_Num"] = pivot_df["Date"].dt.month
 pivot_df["Year_Num"] = pivot_df["Date"].dt.year
-
-area_map = {
-    "CA": 0,
-    "FA": 1,
-    "OA": 2,
-    "TA": 3
-}
-
-pivot_df["Area_Code"] = pivot_df["Attribute"].map(area_map)
 
 targets = [
     "CO2 (ppm)",
